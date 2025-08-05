@@ -63,15 +63,13 @@ The app window will open. Load your audio file, and the app will handle the rest
 
 ```
 audio-transcription-app/
-├── app.py                       # Main application script
-├── requirements.txt             # Python dependencies
-├── README.md                    # This guide
-├── LICENSE                      # License information
-├── models/                      # Place model files here
-│   ├── flores200_sacrebleu_tokenizer_spm.model         # Tokenizer model
-│   └── nllb-200-distilled-600M-ct2/                    # Translation model (manual setup)
-├── assets/                      # Optional icons or fonts
-└── utils/                       # Extra utility scripts (optional)
+├── app.py                       
+├── requirements.txt            
+├── README.md                                        
+├── models/                     
+│   ├── flores200_sacrebleu_tokenizer_spm.model         
+│   └── nllb-200-distilled-600M-ct2/                   
+├── assets/                                    
 ```
 
 ---
@@ -112,9 +110,9 @@ Main packages:
 * `sentencepiece`
 * `pyaudio`
 * `pydub`
-* `numpy`
-* `tk` (usually included with Python)
-
+* `numpy==1.26.4`
+* `tk` 
+* `transformers==4.41.1` 
 ---
 
 ## 🧠 AI Models Used
@@ -156,7 +154,7 @@ ct2-transformers-converter \
 
 ## 🪪 License
 
-This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for details.
+This project is licensed under the **MIT License**. 
 
 ---
 
@@ -204,6 +202,6 @@ You’re welcome to contribute! Fork the project, make your changes, and open a 
 Have questions or suggestions?
 
 * Open an issue on GitHub
-* Email: `your.email@example.com`
+* Email: `umairwaseem5.4.2003@gmail.com`
 
 > Made with ❤️ using Python — to help you turn your audio into accurate, readable text, anytime.
