@@ -193,7 +193,7 @@ You’re welcome to contribute! Fork the project, make your changes, and open a 
 
 ## 🖼️ Screenshots
 
-*Add your screenshots here to showcase the app interface.*
+*<img width="1432" height="659" alt="image" src="https://github.com/user-attachments/assets/c0d35953-bb85-4282-8a12-9a03112c3855" />*
 
 ---
 
