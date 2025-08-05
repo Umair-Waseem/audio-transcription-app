@@ -1,0 +1,34 @@
+# === Python Bytecode and Cache ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyd
+
+# === Virtual Environment ===
+venv/
+.env/
+
+models/ 
+
+# === Model Checkpoints and Large Files ===
+models/nllb-200-distilled-600M-ct2/
+models/flores200_sacrebleu_tokenizer_spm.model
+
+
+# === Logs and Temporary Files ===
+*.log
+*.tmp
+*.swp
+*.bak
+
+# === OS Generated Files ===
+.DS_Store
+Thumbs.db
+
+# === IDEs and Editors ===
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
