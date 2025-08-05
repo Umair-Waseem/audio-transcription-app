@@ -30,7 +30,7 @@ This is a simple and helpful desktop app that lets you **convert audio into text
 ### 1. Download the Project
 
 ```bash
-git clone https://github.com/your-username/audio-transcription-app.git
+git clone https://github.com/Umair-Waseem/audio-transcription-app.git
 cd audio-transcription-app
 ```
 
