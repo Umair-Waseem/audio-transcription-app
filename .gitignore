@@ -9,11 +9,8 @@ __pycache__/
 venv/
 .env/
 
+#----models
 models/ 
-
-# === Model Checkpoints and Large Files ===
-models/nllb-200-distilled-600M-ct2/
-models/flores200_sacrebleu_tokenizer_spm.model
 
 
 # === Logs and Temporary Files ===
