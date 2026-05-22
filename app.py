@@ -13,7 +13,7 @@ import numpy as np
 import threading
 import time
 from contextlib import suppress
-from queue import Queue
+from queue import Empty, Queue
 import pydub
 import pyaudio
 from faster_whisper import WhisperModel
@@ -185,6 +185,15 @@ class GuiComponent:
         )
         self.lang_combobox.pack(side=tk.LEFT, padx=5)
 
+        self.restart_btn = ttk.Button(
+            self.control_frame,
+            text="Restart",
+            command=lambda: self.pipeline.restart_translation(self.device_var.get()),
+            width=10,
+            state=tk.DISABLED
+        )
+        self.restart_btn.pack(side=tk.LEFT, padx=5)
+
         # Add Export button
         export_btn = ttk.Button(
             self.control_frame,
@@ -251,7 +260,7 @@ class GuiComponent:
         if active == "play":
             self.play_btn.config(style="Active.TButton")
             self.pause_btn.config(style="TButton")
-            self.lang_combobox.config(state='disabled')
+            self.lang_combobox.config(state='readonly')
         elif active == "pause":
             self.pause_btn.config(style="Active.TButton")
             self.play_btn.config(style="TButton")
@@ -272,6 +281,13 @@ class GuiComponent:
         self.output_text.config(state='normal')
         self.output_text.delete(1.0, tk.END)
         self.output_text.config(state='disabled')
+
+    def clear_pending_updates(self):
+        while True:
+            try:
+                self.display_queue.get_nowait()
+            except Empty:
+                break
 
     def show_error(self, message: str):
         messagebox.showerror("Error", message)
@@ -305,6 +321,8 @@ class GuiComponent:
                 play_state, pause_state = args
                 self.play_btn.config(state=play_state)
                 self.pause_btn.config(state=pause_state)
+            elif action == 'restart_state':
+                self.restart_btn.config(state=args[0])
         self.root.after(100, self._process_display_queue)
 
 
@@ -570,11 +588,13 @@ class ProcessingPipeline:
             try:
                 self.stop_and_reset()
                 self.audio_handler.load_audio_file(file_path)
+                self.gui.clear_pending_updates()
                 self.gui.clear_output()
                 self.gui.update_file_label(file_path)
                 self.gui.update_language_label("None")
                 self.gui.play_btn.config(state=tk.NORMAL)
                 self.gui.pause_btn.config(state=tk.DISABLED)
+                self.gui.restart_btn.config(state=tk.NORMAL)
             except Exception as e:
                 self.stop_and_reset()
                 self.gui.update_file_label("None")
@@ -633,6 +653,34 @@ class ProcessingPipeline:
             daemon=True
         )
         self.processing_thread.start()
+
+    def restart_translation(self, device: str):
+        if not self.audio_handler.has_audio():
+            self.gui.show_error("Please load an audio file before restarting.")
+            return
+
+        self.run_id += 1
+        self.processing_active = False
+        with self.lang_lock:
+            self.detected_lang = None
+            self.lang_condition.notify_all()
+        with self.pause_lock:
+            self.is_paused = False
+        self.processing_started_once = False
+        self.current_chunk_i = 0
+        self.audio_handler.stop_playback()
+        self.audio_handler.current_position = 0
+        self.processing_thread = None
+        self.detection_thread = None
+
+        self.gui.clear_pending_updates()
+        self.gui.clear_output()
+        self.gui.update_language_label("None")
+        self.gui.highlight_button(None)
+        self.gui.play_btn.config(state=tk.NORMAL)
+        self.gui.pause_btn.config(state=tk.DISABLED)
+        self.gui.restart_btn.config(state=tk.NORMAL)
+        self.start_processing(device)
 
     def _detection_thread(self, run_id: int):
         try:
@@ -758,6 +806,7 @@ class ProcessingPipeline:
         self.audio_handler.current_position = 0
         play_state = tk.NORMAL if self.audio_handler.has_audio() else tk.DISABLED
         self.gui.display_queue.put(('button_state', play_state, tk.DISABLED))
+        self.gui.display_queue.put(('restart_state', play_state))
         self.gui.display_queue.put(('highlight', None))
 
     def _reset_after_worker_failure(self):
@@ -774,6 +823,7 @@ class ProcessingPipeline:
         self.current_chunk_i = 0
         play_state = tk.NORMAL if self.audio_handler.has_audio() else tk.DISABLED
         self.gui.display_queue.put(('button_state', play_state, tk.DISABLED))
+        self.gui.display_queue.put(('restart_state', play_state))
         self.gui.display_queue.put(('highlight', None))
 
     def stop_and_reset(self):
@@ -797,6 +847,9 @@ class ProcessingPipeline:
         if hasattr(self.gui, 'play_btn'):
             self.gui.play_btn.config(state=tk.DISABLED)
             self.gui.pause_btn.config(state=tk.DISABLED)
+        if hasattr(self.gui, 'restart_btn'):
+            self.gui.restart_btn.config(state=tk.DISABLED)
+        if hasattr(self.gui, 'play_btn'):
             self.gui.highlight_button(None)
             self.gui.update_file_label("None")
             self.gui.update_language_label("None")
