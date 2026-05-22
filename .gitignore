@@ -3,14 +3,13 @@ __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
-*.pyd
 
 # === Virtual Environment ===
 venv/
 .env/
 
-#----models
-models/ 
+# === Local Model Files ===
+models/
 
 
 # === Logs and Temporary Files ===
@@ -28,4 +27,3 @@ Thumbs.db
 .idea/
 *.sublime-project
 *.sublime-workspace
-
