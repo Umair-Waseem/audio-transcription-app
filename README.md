@@ -1,6 +1,6 @@
 # 🎤 Offline Real-Time Audio Transcription App
 
-This is a simple and helpful desktop app that lets you **convert audio into text and translate it — all offline**. It runs entirely on your computer and uses powerful tools like [Whisper](https://github.com/openai/whisper), [CTranslate2](https://github.com/OpenNMT/CTranslate2), and [Tkinter](https://docs.python.org/3/library/tkinter.html) for its interface.
+This project is a Tkinter desktop app for offline audio transcription and translation. It loads a WAV or MP3 file, plays it back, detects the spoken language, transcribes the audio with Faster Whisper, optionally translates the transcript with a local NLLB CTranslate2 model, displays timestamped text, and exports the result as a `.txt` file.
 
 ---
 
@@ -25,130 +25,123 @@ This is a simple and helpful desktop app that lets you **convert audio into text
 
 ---
 
-## ⚙️ How to Get Started
 
-### 1. Download the Project
+## Project Structure
 
-```bash
-git clone https://github.com/Umair-Waseem/audio-transcription-app.git
-cd audio-transcription-app
-```
-
-### 2. (Optional) Create a Virtual Environment
-
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-### 3. Install the Requirements
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-## ▶️ Run the App
-
-```bash
-python app.py
-```
-
-The app window will open. Load your audio file, and the app will handle the rest!
-
----
-
-## 📁 Project Folder Structure
-
-```
+```text
 audio-transcription-app/
-├── app.py                       
-├── requirements.txt            
-├── README.md                                        
-├── models/                     
-│   ├── flores200_sacrebleu_tokenizer_spm.model         
-│   └── nllb-200-distilled-600M-ct2/                   
-├── assets/                                    
+|-- app.py
+|-- requirements.txt
+|-- README.md
+|-- assets/
+|   `-- OSR_in_000_0063_8k.wav
+`-- models/                         # Required for translation, not committed
+    |-- flores200_sacrebleu_tokenizer_spm.model
+    `-- nllb-200-distilled-600M-ct2/
 ```
 
----
-
-## 🌍 Supported Languages
+## Supported Languages
 
 | Language | Code |
-| -------- | ---- |
-| English  | `en` |
-| Urdu     | `ur` |
-| Hindi    | `hi` |
+| --- | --- |
+| English | `en` |
+| Hindi | `hi` |
+| Urdu | `ur` |
 
----
+## Requirements
 
-## 🔄 How It Works
+- Python 3.10-3.12 recommended. On Windows, use Python 3.12 for the most reliable dependency installation.
+- FFmpeg on your system `PATH` for MP3 support through `pydub`.
+- Local translation model files under `models/` if you want translated output.
+- On Windows, Python 3.14 can force native builds for packages such as `pyaudio`, which requires Microsoft C++ Build Tools and PortAudio headers. Recreate the environment with Python 3.12 instead of building these packages manually.
+- Python 3.13 and newer also require `audioop-lts`, which is included in `requirements.txt`, because the standard-library `audioop` module was removed.
 
-1. Load your `.mp3` or `.wav` audio file
-2. The app detects the language automatically
-3. It transcribes the speech into text
-4. It translates the text if needed
-5. You see timestamped output in the interface
-6. You can export the final transcript as `.txt`
+## Setup
 
----
-
-## 📦 Required Libraries
-
-Install all libraries with:
-
-```bash
-pip install -r requirements.txt
+```powershell
+py -3.12 -m venv venv
+.\venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
-Main packages:
+If the `py` launcher is unavailable, run the Python 3.12 executable directly to create the environment, then activate it with the same command above.
 
-* `faster-whisper`
-* `ctranslate2`
-* `sentencepiece`
-* `pyaudio`
-* `pydub`
-* `numpy==1.26.4`
-* `tk` 
-* `transformers==4.41.1` 
----
+Confirm the environment is using Python 3.12 before installing:
 
-## 🧠 AI Models Used
+```powershell
+python --version
+```
 
-### 🔊 Transcription Models (Auto-Downloaded)
+Confirm Tkinter is available for the desktop GUI:
 
-These models are automatically downloaded by the program when needed:
+```powershell
+python -m tkinter
+```
 
-* `whisper-base` — for English
-* `vasista22/whisper-hindi-small` — for Hindi
-* `tiny` — for language detection
+If that command fails with a Tcl/Tk error, repair or reinstall Python 3.12 and make sure the Tcl/Tk and IDLE option is selected.
 
-> ✅ You do not need to manually download or convert these models.
+If you already created the virtual environment and see `ModuleNotFoundError: No module named 'audioop'` or `No module named 'pyaudioop'`, reinstall the requirements:
 
-### 🌐 Translation and Tokenization Models (Manual Setup Required)
+```powershell
+python -m pip install -r requirements.txt
+```
 
-Due to GitHub's file size limits, the following models must be **downloaded and set up manually**:
-
-#### 1. **Translation Model:** `nllb-200-distilled-600M-ct2`
-
-* Download from Hugging Face: [facebook/nllb-200-distilled-600M](https://huggingface.co/facebook/nllb-200-distilled-600M)
-* Convert to CTranslate2 format using the following command:
+On macOS or Linux, activate the environment with:
 
 ```bash
+source venv/bin/activate
+```
+
+For MP3 support on Windows, install FFmpeg and reopen PowerShell:
+
+```powershell
+winget install -e --id Gyan.FFmpeg
+ffmpeg -version
+```
+
+## Translation Model Setup
+
+The app can transcribe without the local NLLB translation model when the selected output language matches the detected source language. Translation between languages requires these files:
+
+1. Convert `facebook/nllb-200-distilled-600M` to CTranslate2 format:
+
+```bash
+python -m pip install transformers==4.41.1
 ct2-transformers-converter \
   --model facebook/nllb-200-distilled-600M \
   --output_dir models/nllb-200-distilled-600M-ct2 \
   --quantization int8
 ```
 
-* Place the converted folder inside the `models/` directory.
+2. Download the FLORES tokenizer and save it as:
 
-#### 2. **Tokenizer Model:** `flores200_sacrebleu_tokenizer_spm.model`
+```text
+models/flores200_sacrebleu_tokenizer_spm.model
+```
 
-* Download from: [flores200 tokenizer](https://dl.fbaipublicfiles.com/nllb/flores200/sacrebleu_tokenizer_spm.model)
-* Save it in the `models/` directory as shown in the structure above.
+## Run
+
+```powershell
+python app.py
+```
+
+Then load an audio file, choose CPU or GPU, choose the desired output language, and press Play. Use Restart after changing the output language to clear the previous text and process the loaded audio again with the newly selected language.
+
+## Test
+
+There is no automated test suite in this repository yet. Use these checks after changes:
+
+```powershell
+python -m py_compile app.py
+python app.py
+```
+
+## Notes
+
+- Whisper models are downloaded by Faster Whisper when first used, so the first run may need internet access unless the models are already cached.
+- Translation model files are intentionally not included because they are large.
+- Exported transcripts are written to the current user's Downloads folder.
 
 ---
 
