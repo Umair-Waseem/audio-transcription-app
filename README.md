@@ -170,14 +170,6 @@ This project is licensed under the **MIT License**.
 
 ---
 
-## ❓ Troubleshooting
-
-* **App won’t open?** Make sure you have Python 3.8+ and all dependencies installed
-* **No sound?** Check that `pyaudio` is installed and your audio device is working
-* **No transcription?** Confirm models are properly placed and the audio is clear
-
----
-
 ## 🤝 Want to Help?
 
 You’re welcome to contribute! Fork the project, make your changes, and open a pull request.
@@ -186,7 +178,7 @@ You’re welcome to contribute! Fork the project, make your changes, and open a 
 
 ## 🖼️ Screenshots
 
-*<img width="1432" height="659" alt="image" src="https://github.com/user-attachments/assets/c0d35953-bb85-4282-8a12-9a03112c3855" />*
+<img width="1360" height="672" alt="image" src="https://github.com/user-attachments/assets/082d0a71-a9a4-4296-ad8c-8556bb3655be" />
 
 ---
 
