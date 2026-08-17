@@ -1,8 +1,0 @@
-faster-whisper
-ctranslate2
-sentencepiece
-pydub
-audioop-lts; python_version >= "3.13"
-pyaudio
-numpy>=1.26.4,<3
-tk
