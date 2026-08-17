@@ -1,0 +1,29 @@
+# === Python Bytecode and Cache ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# === Virtual Environment ===
+venv/
+.env/
+
+# === Local Model Files ===
+models/
+
+
+# === Logs and Temporary Files ===
+*.log
+*.tmp
+*.swp
+*.bak
+
+# === OS Generated Files ===
+.DS_Store
+Thumbs.db
+
+# === IDEs and Editors ===
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
