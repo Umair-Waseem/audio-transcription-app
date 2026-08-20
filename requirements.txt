@@ -1,0 +1,16 @@
+# Speech recognition and the inference engine it runs on.
+faster-whisper>=1.0,<2
+ctranslate2>=4.0,<5
+
+# Tokenizer for the NLLB translation model.
+sentencepiece>=0.2,<1
+
+# Audio decoding and playback.
+pydub>=0.25,<1
+pyaudio>=0.2.14,<1
+
+# Array handling for audio buffers.
+numpy>=1.26.4,<3
+
+# pydub needs audioop, which left the standard library in Python 3.13.
+audioop-lts>=0.2; python_version >= "3.13"
